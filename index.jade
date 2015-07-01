@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  script(src="minesweeper-bundle.js")
+  h1 MineSweeper Prototype
+  div(ng-app='minesweeperApp')
+    div(ng-controller='minesweeperController')
+      div(ng-repeat='gy in gridYRange')
+        span(ng-repeat='gx in gridXRange')
+          span(ng-init='x=gx;y=gy', ng-click='uncover(x,y)') {{getCell(gx,gy)}}

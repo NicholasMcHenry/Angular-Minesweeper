@@ -1,0 +1,7 @@
+Build Instructions:
+npm install jade -g
+npm install mocha -g
+npm install chai -g
+npm install angular
+//Assumes Mac
+jade index.jade && open -a Firefox index.html
