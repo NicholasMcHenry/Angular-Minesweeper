@@ -4,6 +4,10 @@ var arr2d = require("./array2d")
 var geom = require("./geometry")
 var cell = require("./cell")
 
+var defaultWidth = 10
+var defaultHeight = 10
+var defaultNumMines = 10
+
 function _initMinefield(w, h) {
     //make a WxH array initialized to 0
     return arr2d.make2dArray(w,h).setAll(cell.makeCell, true)
@@ -58,7 +62,7 @@ function getPropagationList(minefield, x, y) {
 
 function plantMines(minefield, n) {
   //get n random valid points
-  var pts = _.sample(geom.getAllCoordinates(_maxPt(minefield)), n)
+  var pts = _.sample(geom.getAllCoordinates(_maxPt(minefield)), _limitVal(n,0,50*50,defaultNumMines))
   //place a mine at each of those points
   _.map(pts, function(point) {
       minefield.plantMine(point.x, point.y)
@@ -82,10 +86,12 @@ function at(minefield, x, y) {
 }
 
 function uncover(minefield, x, y) {
+  //returns a bool 'isGameOver'
   var cell = minefield.get(x,y)
   if(cell.isMine) { //game over
     //show all cells
     showAll(minefield)
+    return true
   } else {
     //show the cell itself
     cell.show()
@@ -94,21 +100,29 @@ function uncover(minefield, x, y) {
       minefield.get(point.x, point.y).show()
     })
   }
-  return minefield
+  return false
+}
+
+function _limitVal(val, min, max, defaultForVal) {
+  var v = val || defaultForVal
+  if(v < min) { return min }
+  else if (v > max) { return max }
+  return v
 }
 
 function makeMinefield(width,height) {
-    var mf = _initMinefield(width || 10, height || 10)
-    mf.plantMine = _.partial(plantMine, mf)
-    mf.plantMines = _.partial(plantMines, mf)
-    mf.width = mf.shape[0]
-    mf.height = mf.shape[1]
-    mf.at = _.partial(at, mf)
-    mf.uncover = _.partial(uncover, mf)
-    mf.showAll = _.partial(showAll, mf)
-    //below are functions that aren't part of the interface, but really needed to be tested
-    mf.getPropagationList = _.partial(getPropagationList, mf)
-    return mf
+  var mf = _initMinefield(_limitVal(width,1,50,defaultWidth),
+                          _limitVal(height,1,50,defaultHeight))
+  mf.plantMine = _.partial(plantMine, mf)
+  mf.plantMines = _.partial(plantMines, mf)
+  mf.width = mf.shape[0]
+  mf.height = mf.shape[1]
+  mf.at = _.partial(at, mf)
+  mf.uncover = _.partial(uncover, mf)
+  mf.showAll = _.partial(showAll, mf)
+  //below are functions that aren't part of the interface, but really needed to be tested
+  mf.getPropagationList = _.partial(getPropagationList, mf)
+  return mf
 }
 
 module.exports.makeMinefield = makeMinefield

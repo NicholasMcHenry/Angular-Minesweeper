@@ -2,9 +2,21 @@ extends layout
 
 block content
   script(src="minesweeper-bundle.js")
-  h1 MineSweeper Prototype
   div(ng-app='minesweeperApp')
     div(ng-controller='minesweeperController')
+      h1 MineSweeper Prototype
+      h2 Settings (Changes won't happen until you click the smiley)
+      label Width:
+        input(type='text', ng-model='gridWidth')
+      label Height:
+        input(type='text', ng-model='gridHeight')
+      label # of Mines:
+        input(type='text', ng-model='numMines')
+      h2 The Minefield ({{grid.width}}x{{grid.height}})
+      div
+        span Mines: {{numMines}}
+        button(ng-click='reset()') {{smileyGraphic}}
+        span Time: TODO
       div(ng-repeat='gy in gridYRange')
         span(ng-repeat='gx in gridXRange')
           span(ng-init='x=gx;y=gy', ng-click='uncover(x,y)') {{getCell(gx,gy)}}
