@@ -82,13 +82,18 @@ function at(minefield, x, y) {
 }
 
 function uncover(minefield, x, y) {
-  //TODO game-over stuff
-  //uncover that spot
-  minefield.get(x,y).show()
-  //propagate uncovering (if a 0 cell was clicked)
-  _.map(getPropagationList(minefield,x,y), function(point) {
-    minefield.get(point.x, point.y).show()
-  })
+  var cell = minefield.get(x,y)
+  if(cell.isMine) { //game over
+    //show all cells
+    showAll(minefield)
+  } else {
+    //show the cell itself
+    cell.show()
+    //propagate uncovering to show other stuff
+    _.map(getPropagationList(minefield,x,y), function(point) {
+      minefield.get(point.x, point.y).show()
+    })
+  }
   return minefield
 }
 

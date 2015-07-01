@@ -3,5 +3,6 @@ npm install jade -g
 npm install mocha -g
 npm install chai -g
 npm install angular
+npm install browserify --save-dev
 //Assumes Mac
-jade index.jade && open -a Firefox index.html
+browserify minesweeperApp.js -o minesweeper-bundle.js && jade index.jade && open -a Firefox index.html

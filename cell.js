@@ -2,8 +2,8 @@
 //  One of: isMine, isHidden, or dangerLvl(0-8)
 var cellPrototype = {
   dangerLevel:0, //indicates number of adjacent mines
-  isMine:0,
-  isHidden:1,
+  isMine:false,
+  isHidden:true,
   getValue: function() {
       if(this.isHidden) {
 	  return ' '
@@ -32,7 +32,7 @@ var cellPrototype = {
     show: function() {
 	//change the state so that things can be seen
 	//  this means getValue() will now return #s when called
-	this.isHidden = 0
+	this.isHidden = false
 	return this.getValue()
     }
 }

@@ -85,8 +85,8 @@ module.exports = {
 //  One of: isMine, isHidden, or dangerLvl(0-8)
 var cellPrototype = {
   dangerLevel:0, //indicates number of adjacent mines
-  isMine:0,
-  isHidden:1,
+  isMine:false,
+  isHidden:true,
   getValue: function() {
       if(this.isHidden) {
 	  return ' '
@@ -115,7 +115,7 @@ var cellPrototype = {
     show: function() {
 	//change the state so that things can be seen
 	//  this means getValue() will now return #s when called
-	this.isHidden = 0
+	this.isHidden = false
 	return this.getValue()
     }
 }
@@ -302,13 +302,18 @@ function at(minefield, x, y) {
 }
 
 function uncover(minefield, x, y) {
-  //TODO game-over stuff
-  //uncover that spot
-  minefield.get(x,y).show()
-  //propagate uncovering (if a 0 cell was clicked)
-  _.map(getPropagationList(minefield,x,y), function(point) {
-    minefield.get(point.x, point.y).show()
-  })
+  var cell = minefield.get(x,y)
+  if(cell.isMine) { //game over
+    //show all cells
+    showAll(minefield)
+  } else {
+    //show the cell itself
+    cell.show()
+    //propagate uncovering to show other stuff
+    _.map(getPropagationList(minefield,x,y), function(point) {
+      minefield.get(point.x, point.y).show()
+    })
+  }
   return minefield
 }
 
