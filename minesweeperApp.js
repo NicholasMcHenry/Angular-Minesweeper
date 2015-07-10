@@ -1,8 +1,9 @@
 var angular = require("angular") //exposes angular even w/o storing it in a var
 var _ = require("underscore")
 var mf = require("./minefield")
+var timer = require("angular-timer")
 
-angular.module('minesweeperApp', [])
+angular.module('minesweeperApp', ['timer'])
 .controller('minesweeperController', 
             ['$scope', minesweeperController])
 .directive('ngRightClick', function($parse) { //from stackoverflow
@@ -26,6 +27,17 @@ function minesweeperController($scope) {
   $scope.gridWidth = 10
   $scope.gridHeight = 10
   $scope.numMines = 10
+
+  //timer stuff; from the timer library examples
+  $scope.timerRunning = false
+  $scope.startTimer = function (){
+    $scope.$broadcast('timer-start')
+    $scope.timerRunning = true
+  }
+  $scope.stopTimer = function (){
+    $scope.$broadcast('timer-stop')
+    $scope.timerRunning = false
+  }
 
   //Functionality
   $scope.setSmileyGraphic = function(gfxId) {
@@ -51,11 +63,13 @@ function minesweeperController($scope) {
   }
   //initialization func; grid is the main data structure
   $scope.reset = function() {
+    $scope.startTimer()
     $scope.grid = mf.makeMinefield($scope.gridWidth,$scope.gridHeight).plantMines($scope.numMines)
     $scope.uncover = function(x,y) {
       var isGameOver = $scope.grid.uncover(x,y)
       if(isGameOver) {
         $scope.setSmileyGraphic("GAME_OVER")
+        $scope.stopTimer()
       }
     }
     $scope.isRevealed = function(x,y) {
