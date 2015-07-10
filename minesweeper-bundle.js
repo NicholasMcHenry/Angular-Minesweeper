@@ -291,10 +291,22 @@ function plantMines(minefield, n) {
 }
 
 function showAll(minefield) {
-  //Used to show all cells (w/o propagation) at game over & for testing
+  //Used to show all cells (w/o propagation); Used for testing
   var allPts = geom.getAllCoordinates(_maxPt(minefield))
   _.map(allPts, function(point) {
     minefield.get(point.x, point.y).show()
+  })
+  return minefield
+}
+
+function _showAllMines(minefield) {
+  //Used to show all mines (w/o propagation); Used when a player loses
+  var allPts = geom.getAllCoordinates(_maxPt(minefield))
+  _.map(allPts, function(point) {
+    var cell = minefield.get(point.x, point.y)
+    if(cell.isMine) {
+      cell.show()
+    }
   })
   return minefield
 }
@@ -314,8 +326,8 @@ function uncover(minefield, x, y) {
   //returns a bool 'isGameOver'
   var cell = minefield.get(x,y)
   if(cell.isMine) { //game over
-    //show all cells
-    showAll(minefield)
+    //show all mines
+    _showAllMines(minefield)
     return true
   } else {
     //show the cell itself
