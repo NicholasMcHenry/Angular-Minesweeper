@@ -85,6 +85,11 @@ function at(minefield, x, y) {
   return minefield.get(x,y).getValue()
 }
 
+function isHidden(minefield, x, y) {
+  //exposes the bool to the outside
+  return minefield.get(x,y).isHidden
+}
+
 function uncover(minefield, x, y) {
   //returns a bool 'isGameOver'
   var cell = minefield.get(x,y)
@@ -119,6 +124,7 @@ function makeMinefield(width,height) {
   mf.height = mf.shape[1]
   mf.at = _.partial(at, mf)
   mf.uncover = _.partial(uncover, mf)
+  mf.isHidden = _.partial(isHidden, mf)
   mf.showAll = _.partial(showAll, mf)
   //below are functions that aren't part of the interface, but really needed to be tested
   mf.getPropagationList = _.partial(getPropagationList, mf)

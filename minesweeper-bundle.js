@@ -305,6 +305,11 @@ function at(minefield, x, y) {
   return minefield.get(x,y).getValue()
 }
 
+function isHidden(minefield, x, y) {
+  //exposes the bool to the outside
+  return minefield.get(x,y).isHidden
+}
+
 function uncover(minefield, x, y) {
   //returns a bool 'isGameOver'
   var cell = minefield.get(x,y)
@@ -339,6 +344,7 @@ function makeMinefield(width,height) {
   mf.height = mf.shape[1]
   mf.at = _.partial(at, mf)
   mf.uncover = _.partial(uncover, mf)
+  mf.isHidden = _.partial(isHidden, mf)
   mf.showAll = _.partial(showAll, mf)
   //below are functions that aren't part of the interface, but really needed to be tested
   mf.getPropagationList = _.partial(getPropagationList, mf)
@@ -373,6 +379,19 @@ function minesweeperController($scope) {
       $scope.smileyGraphic = "=) RESET"
     }
   }
+  $scope.numberTiles = ["green.jpg","green1.jpg","green2.jpg","green3.jpg", "green4.jpg", "green5.jpg", "green6.jpg", "green7.jpg", "green8.jpg"]
+  $scope.resolveImage = function(val) {
+    //get the image for that value
+    //  covered tiles get a random grass image
+    //behavior undefined for strange cell values
+    var imgName = ""
+    if(val === 'm') { imgName = "explosion.jpg" }
+    else if(val === ' ') { imgName = "grass3.jpg" }
+    else { //is a number tile
+      imgName = $scope.numberTiles[val]
+    }
+    return imgName
+  }
   //initialization func; grid is the main data structure
   $scope.reset = function() {
     $scope.grid = mf.makeMinefield($scope.gridWidth,$scope.gridHeight).plantMines($scope.numMines)
@@ -382,10 +401,15 @@ function minesweeperController($scope) {
         $scope.setSmileyGraphic("GAME_OVER")
       }
     }
+    $scope.isRevealed = function(x,y) {
+      return !$scope.grid.isHidden(x,y)
+    }
     $scope.gridXRange = _.range($scope.gridWidth)
     $scope.gridYRange = _.range($scope.gridHeight)
     $scope.getCell = function(x,y) {
-      return "[" + $scope.grid.at(x,y) + "]"
+      //read the value at that cell and return the right graphic (as a filename)
+      var val = $scope.grid.at(x,y)
+      return $scope.resolveImage(val)
     }
     $scope.setSmileyGraphic("DEFAULT")
   }

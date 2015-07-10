@@ -1,3 +1,19 @@
 body { 
   font-family: "Lucida Console", Monaco, monospace;
 }
+
+#grid img {
+  border: 4px outset green;
+}
+
+#grid .revealedCell {
+  border: 4px groove DarkGreen;
+}
+
+.cell {
+  background-color: gray;
+  border: 2px solid black;
+  display: inline-block;
+  min-width: 40px;
+  min-height: 40px;
+}

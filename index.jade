@@ -13,10 +13,13 @@ block content
       label # of Mines:
         input(type='text', ng-model='numMines')
       h2 The Minefield ({{grid.width}}x{{grid.height}})
+      p The game had already started. Feel free to click on a cell.
       div
-        span Mines: {{numMines}}
-        button(ng-click='reset()') {{smileyGraphic}}
+        span Mines: {{numMines}} 
+        button(ng-click='reset()') {{smileyGraphic}} 
         span Time: TODO
-      div(ng-repeat='gy in gridYRange')
+      div#grid(ng-repeat='gy in gridYRange')
         span(ng-repeat='gx in gridXRange')
-          span(ng-init='x=gx;y=gy', ng-click='uncover(x,y)') {{getCell(gx,gy)}}
+          span(ng-click='uncover(gx,gy)')
+            img(ng-class='{"revealedCell": isRevealed(gx,gy)}', ng-src='assets/{{getCell(gx,gy)}}')
+          // span.cell(ng-click='uncover(gx,gy)') {{getCell(gx,gy)}}
