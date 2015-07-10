@@ -5,6 +5,18 @@ var mf = require("./minefield")
 angular.module('minesweeperApp', [])
 .controller('minesweeperController', 
             ['$scope', minesweeperController])
+.directive('ngRightClick', function($parse) { //from stackoverflow
+  return function(scope, element, attrs) {
+    var fn = $parse(attrs.ngRightClick);
+    element.bind('contextmenu', function(event) {
+      scope.$apply(function() {
+        event.preventDefault();
+        fn(scope, {$event:event});
+      });
+    });
+  };
+});
+
 function minesweeperController($scope) {
   //Configuration layer for the minefield node module
   //  Just pulls already defined functions into angular
@@ -29,7 +41,8 @@ function minesweeperController($scope) {
     //  covered tiles get a random grass image
     //behavior undefined for strange cell values
     var imgName = ""
-    if(val === 'm') { imgName = "explosion.jpg" }
+    if(val === 'f') { imgName = "tileFlag.jpg" }
+    else if(val === 'm') { imgName = "explosion.jpg" }
     else if(val === ' ') { imgName = "grass3.jpg" }
     else { //is a number tile
       imgName = $scope.numberTiles[val]
@@ -48,6 +61,7 @@ function minesweeperController($scope) {
     $scope.isRevealed = function(x,y) {
       return !$scope.grid.isHidden(x,y)
     }
+    $scope.plantFlag = $scope.grid.plantFlag
     $scope.gridXRange = _.range($scope.gridWidth)
     $scope.gridYRange = _.range($scope.gridHeight)
     $scope.getCell = function(x,y) {

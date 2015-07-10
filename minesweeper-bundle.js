@@ -87,14 +87,17 @@ var cellPrototype = {
   dangerLevel:0, //indicates number of adjacent mines
   isMine:false,
   isHidden:true,
+  hasFlag:false,
   getValue: function() {
-      if(this.isHidden) {
-	  return ' '
-      } else if (this.isMine) {
-	  return 'm'
-      } else {
-          return this.dangerLevel
-      }
+    if(this.hasFlag) {
+      return 'f'
+    } else if(this.isHidden) {
+      return ' '
+    } else if (this.isMine) {
+      return 'm'
+    } else {
+      return this.dangerLevel
+    }
   },
   dangerUp: function() {
     //increment the # indicating the number of adjacent mines
@@ -109,15 +112,23 @@ var cellPrototype = {
     this.dangerLevel = 'm'
     return this
   },
+  plantFlag: function() {
+    //toggles the state for the flag icon on & off iff hidden
+    if(this.isHidden) {
+      this.hasFlag = !this.hasFlag
+    }
+    return this
+  },
   toString: function() {
     return this.getValue()
   },
-    show: function() {
-	//change the state so that things can be seen
-	//  this means getValue() will now return #s when called
-	this.isHidden = false
-	return this.getValue()
-    }
+  show: function() {
+    //change the state so that things can be seen
+    //  this means getValue() will now return #s when called
+    this.hasFlag = false
+    this.isHidden = false
+    return this.getValue()
+  }
 }
 
 function makeCell() {
@@ -252,6 +263,14 @@ function plantMine(minefield, x, y) {
   return minefield
 }
 
+function plantFlag(minefield, x, y) {
+  //if in bounds, change the state to say a flag is there
+  if(minefield.inBounds(x,y)) {
+    minefield.get(x,y).plantFlag()
+  }
+  return minefield
+}
+
 function _maxPt(minefield) {
     //return a point representing the dimentions
     return geom.pt(minefield.shape[0],minefield.shape[1])
@@ -352,6 +371,7 @@ function makeMinefield(width,height) {
                           _limitVal(height,1,50,defaultHeight))
   mf.plantMine = _.partial(plantMine, mf)
   mf.plantMines = _.partial(plantMines, mf)
+  mf.plantFlag = _.partial(plantFlag, mf)
   mf.width = mf.shape[0]
   mf.height = mf.shape[1]
   mf.at = _.partial(at, mf)
@@ -373,6 +393,18 @@ var mf = require("./minefield")
 angular.module('minesweeperApp', [])
 .controller('minesweeperController', 
             ['$scope', minesweeperController])
+.directive('ngRightClick', function($parse) { //from stackoverflow
+  return function(scope, element, attrs) {
+    var fn = $parse(attrs.ngRightClick);
+    element.bind('contextmenu', function(event) {
+      scope.$apply(function() {
+        event.preventDefault();
+        fn(scope, {$event:event});
+      });
+    });
+  };
+});
+
 function minesweeperController($scope) {
   //Configuration layer for the minefield node module
   //  Just pulls already defined functions into angular
@@ -397,7 +429,8 @@ function minesweeperController($scope) {
     //  covered tiles get a random grass image
     //behavior undefined for strange cell values
     var imgName = ""
-    if(val === 'm') { imgName = "explosion.jpg" }
+    if(val === 'f') { imgName = "tileFlag.jpg" }
+    else if(val === 'm') { imgName = "explosion.jpg" }
     else if(val === ' ') { imgName = "grass3.jpg" }
     else { //is a number tile
       imgName = $scope.numberTiles[val]
@@ -416,6 +449,7 @@ function minesweeperController($scope) {
     $scope.isRevealed = function(x,y) {
       return !$scope.grid.isHidden(x,y)
     }
+    $scope.plantFlag = $scope.grid.plantFlag
     $scope.gridXRange = _.range($scope.gridWidth)
     $scope.gridYRange = _.range($scope.gridHeight)
     $scope.getCell = function(x,y) {

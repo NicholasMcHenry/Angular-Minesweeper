@@ -4,7 +4,7 @@ block content
   script(src="minesweeper-bundle.js")
   div(ng-app='minesweeperApp')
     div(ng-controller='minesweeperController')
-      h1 Landmine Digger
+      h1 Landmine Scooper
       h2 Settings (Changes won't happen until you click the smiley)
       label Width:
         input(type='text', ng-model='gridWidth')
@@ -20,6 +20,6 @@ block content
         span Time: TODO
       div#grid(ng-repeat='gy in gridYRange')
         span(ng-repeat='gx in gridXRange')
-          span(ng-click='uncover(gx,gy)')
+          span(ng-click='uncover(gx,gy)', ng-right-click='plantFlag(gx,gy)')
             img(ng-class='{"revealedCell": isRevealed(gx,gy)}', ng-src='assets/{{getCell(gx,gy)}}')
           // span.cell(ng-click='uncover(gx,gy)') {{getCell(gx,gy)}}

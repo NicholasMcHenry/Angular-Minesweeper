@@ -4,14 +4,17 @@ var cellPrototype = {
   dangerLevel:0, //indicates number of adjacent mines
   isMine:false,
   isHidden:true,
+  hasFlag:false,
   getValue: function() {
-      if(this.isHidden) {
-	  return ' '
-      } else if (this.isMine) {
-	  return 'm'
-      } else {
-          return this.dangerLevel
-      }
+    if(this.hasFlag) {
+      return 'f'
+    } else if(this.isHidden) {
+      return ' '
+    } else if (this.isMine) {
+      return 'm'
+    } else {
+      return this.dangerLevel
+    }
   },
   dangerUp: function() {
     //increment the # indicating the number of adjacent mines
@@ -26,15 +29,23 @@ var cellPrototype = {
     this.dangerLevel = 'm'
     return this
   },
+  plantFlag: function() {
+    //toggles the state for the flag icon on & off iff hidden
+    if(this.isHidden) {
+      this.hasFlag = !this.hasFlag
+    }
+    return this
+  },
   toString: function() {
     return this.getValue()
   },
-    show: function() {
-	//change the state so that things can be seen
-	//  this means getValue() will now return #s when called
-	this.isHidden = false
-	return this.getValue()
-    }
+  show: function() {
+    //change the state so that things can be seen
+    //  this means getValue() will now return #s when called
+    this.hasFlag = false
+    this.isHidden = false
+    return this.getValue()
+  }
 }
 
 function makeCell() {

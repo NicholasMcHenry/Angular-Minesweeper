@@ -32,6 +32,14 @@ function plantMine(minefield, x, y) {
   return minefield
 }
 
+function plantFlag(minefield, x, y) {
+  //if in bounds, change the state to say a flag is there
+  if(minefield.inBounds(x,y)) {
+    minefield.get(x,y).plantFlag()
+  }
+  return minefield
+}
+
 function _maxPt(minefield) {
     //return a point representing the dimentions
     return geom.pt(minefield.shape[0],minefield.shape[1])
@@ -132,6 +140,7 @@ function makeMinefield(width,height) {
                           _limitVal(height,1,50,defaultHeight))
   mf.plantMine = _.partial(plantMine, mf)
   mf.plantMines = _.partial(plantMines, mf)
+  mf.plantFlag = _.partial(plantFlag, mf)
   mf.width = mf.shape[0]
   mf.height = mf.shape[1]
   mf.at = _.partial(at, mf)
