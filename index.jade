@@ -15,11 +15,10 @@ block content
       h2 The Minefield ({{grid.width}}x{{grid.height}})
       p The game had already started. Feel free to click on a cell.
       div
-        span Mines: {{numMines}} 
+        span Mines: {{numMines - grid.flagCount}} 
         button(ng-click='reset()') {{smileyGraphic}} 
         span Time: TODO
       div#grid(ng-repeat='gy in gridYRange')
         span(ng-repeat='gx in gridXRange')
           span(ng-click='uncover(gx,gy)', ng-right-click='plantFlag(gx,gy)')
             img(ng-class='{"revealedCell": isRevealed(gx,gy)}', ng-src='assets/{{getCell(gx,gy)}}')
-          // span.cell(ng-click='uncover(gx,gy)') {{getCell(gx,gy)}}

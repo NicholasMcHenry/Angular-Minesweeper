@@ -240,8 +240,11 @@ var defaultHeight = 10
 var defaultNumMines = 10
 
 function _initMinefield(w, h) {
-    //make a WxH array initialized to 0
-    return arr2d.make2dArray(w,h).setAll(cell.makeCell, true)
+  //make a WxH array initialized to 0
+  var mf = arr2d.make2dArray(w,h).setAll(cell.makeCell, true)
+  //add a property to track how many flags a user has placed
+  mf.flagCount = 0 
+  return mf
 }
 
 function _validNeighbours(minefield,x,y) {
@@ -266,7 +269,13 @@ function plantMine(minefield, x, y) {
 function plantFlag(minefield, x, y) {
   //if in bounds, change the state to say a flag is there
   if(minefield.inBounds(x,y)) {
-    minefield.get(x,y).plantFlag()
+    var cell = minefield.get(x,y).plantFlag() //returns this, so the cell is still stored
+    //update the flag count. The flag jsut toggled on/off so the change is +1/-1
+    if(cell.hasFlag) {
+      minefield.flagCount = minefield.flagCount + 1
+    } else {
+      minefield.flagCount = minefield.flagCount - 1
+    }
   }
   return minefield
 }
@@ -367,6 +376,10 @@ function _limitVal(val, min, max, defaultForVal) {
 }
 
 function makeMinefield(width,height) {
+  //methods are added in this manner to
+  //  keep this factory from becoming huge
+  //  and to aid testing by having the functions
+  //  independent of the object
   var mf = _initMinefield(_limitVal(width,1,50,defaultWidth),
                           _limitVal(height,1,50,defaultHeight))
   mf.plantMine = _.partial(plantMine, mf)
