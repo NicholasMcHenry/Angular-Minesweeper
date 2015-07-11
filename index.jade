@@ -23,5 +23,5 @@ block content
           timer(interval='1000') {{seconds}}
       div#grid(ng-repeat='gy in gridYRange')
         span(ng-repeat='gx in gridXRange')
-          span(ng-click='uncover(gx,gy)', ng-right-click='plantFlag(gx,gy)')
+          span(ng-mousedown='setSmileyGraphic("MOUSE_DOWN")',ng-click='uncover(gx,gy)', ng-right-click='plantFlag(gx,gy)')
             img(ng-class='{"revealedCell": isRevealed(gx,gy)}', ng-src='assets/{{getCell(gx,gy)}}')

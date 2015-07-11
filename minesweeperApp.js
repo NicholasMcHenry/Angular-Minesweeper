@@ -43,6 +43,8 @@ function minesweeperController($scope) {
   $scope.setSmileyGraphic = function(gfxId) {
     if(gfxId === "GAME_OVER") {
       $scope.smileyGraphic = "=X GAME OVER"
+    } else if(gfxId === "MOUSE_DOWN") {
+      $scope.smileyGraphic = "=O RESET"
     } else {
       $scope.smileyGraphic = "=) RESET"
     }
@@ -70,12 +72,17 @@ function minesweeperController($scope) {
       if(isGameOver) {
         $scope.setSmileyGraphic("GAME_OVER")
         $scope.stopTimer()
+      } else {
+        $scope.setSmileyGraphic("DEFAULT")
       }
     }
     $scope.isRevealed = function(x,y) {
       return !$scope.grid.isHidden(x,y)
     }
-    $scope.plantFlag = $scope.grid.plantFlag
+    $scope.plantFlag = function(x,y) {
+      $scope.grid.plantFlag(x,y)
+      $scope.setSmileyGraphic("DEFAULT")
+    }
     $scope.gridXRange = _.range($scope.gridWidth)
     $scope.gridYRange = _.range($scope.gridHeight)
     $scope.getCell = function(x,y) {
